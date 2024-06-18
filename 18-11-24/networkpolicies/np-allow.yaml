@@ -1,0 +1,92 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ingress-bar-foo
+  namespace: foo-ns
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: toto
+      namespaceSelector: {}
+    - namespaceSelector:
+        matchLabels:
+          labelsNamespace: bar-ns
+      podSelector: {}
+    ports:
+    - protocol: TCP
+      port: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ingress-bar
+  namespace: toto-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: toto
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: bar
+      namespaceSelector:
+        matchLabels:
+          labelsNamespace: bar-ns
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          labelsNamespace: foo-ns
+    ports:
+    - protocol: TCP
+      port: 80
+
+
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-toto-foo
+  namespace: toto-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: toto
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          labelsNamespace: foo-ns
+    ports:
+    - protocol: TCP
+      port: 80
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all-egress-udp-53
+  namespace: toto-ns
+spec:
+  podSelector: {} # Selects all pods in the namespace (can be refined)
+  policyTypes:
+  - Egress
+  egress:
+  - ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53

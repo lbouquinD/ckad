@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bar-sa
+  labels:
+    app: bar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bar
+  template:
+    metadata:
+      labels:
+        app: bar
+    spec:
+      serviceAccountName: monpremiersa
+      containers:
+      - name: curl
+        image:  curlimages/curl
+        command:
+          - sh
+          - -c
+          - |
+            while true; do
+              echo "Liste des namespaces:" ; 
+              curl -s --header "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+                --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+                https://kubernetes/api/v1/namespaces \
+                | grep -o '"name": "[^"]*' \
+                | awk -F '[:,]' '{print $2}';
+              echo ; 
+              sleep 5;
+            done
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: monpremiersa
+
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: pod-reader-role
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-reader-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pod-reader-role
+subjects:
+- kind: ServiceAccount
+  name: monpremiersa
+  namespace: default

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: formation-ckad-cm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: formation-ckad-cm
+  template:
+    metadata:
+      labels:
+        app: formation-ckad-cm
+    spec:
+      volumes:
+      - name: config
+        configMap:
+          name: index-html-configmap
+          items:
+          - key: "index.html"
+            path: "index.html"
+      containers:
+      - name: ckad-formation-ingress
+        image: lbouquin/ckad-formation-ingress:0.0.22
+        ports:
+        - containerPort: 80
+        env:
+        - name: MY_POD_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: index-html-configmap
+              key: my_pod_name
+        volumeMounts:
+        - name: config
+          mountPath: "/config"
+          readOnly: true

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: formmations-ckad-security-context
+  labels:
+    app: formmations-ckad-security-context
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: formmations-ckad-security-context
+  template:
+    metadata:
+      labels:
+        app: formmations-ckad-security-context
+    spec:
+      securityContext: 
+          runAsUser: 1001 
+          runAsNonRoot:  true
+      containers:
+      - name: securitycontext-exemple
+        image:   lbouquin/formation-ckad-general-image:0.0.3
+        securityContext: 
+          capabilities: 
+            add: ["NET_ADMIN", "SYS_TIME"] 
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true

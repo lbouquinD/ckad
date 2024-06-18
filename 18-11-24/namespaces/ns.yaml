@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: foo-ns
+  labels: 
+     app: foo-ns
+spec: {}
+status: {}
+
+--- 
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: bar-ns
+  labels: 
+     app: bar-ns
+spec: {}
+status: {}

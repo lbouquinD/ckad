@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: bar-ns
+spec: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: foo-ns
+spec: {}
+status: {}
+
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bar-volumes
+  namespace: bar-ns
+  labels:
+    app: bar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bar
+  template:
+    metadata:
+      labels:
+        app: bar
+    spec:
+      volumes:
+      - name: cache-volume
+        emptyDir: {} 
+      containers:
+      - name: ckad-formation-ingress
+        image:  lbouquin/ckad-formation-ingress:0.0.23
+        ports:
+        - containerPort: 80
+        env: 
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAME 
+          value: bar.test.fr.
+        volumeMounts:  # Decomment to use it
+        - name: cache-volume
+          mountPath: /tmp
+      - name: ckad-formation-ingress2 
+        image:  busybox
+        command: 
+         - "/bin/sh"
+         - "sleep  200000 "
+        ports:
+        - containerPort: 80
+        env: 
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAME 
+          value: bar.test.fr2.
+        volumeMounts:  # Decomment to use it
+        - name: cache-volume
+          mountPath: /tmp
+
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foo-volume
+  namespace: foo-ns
+  labels:
+    app: foo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: foo
+  template:
+    metadata:
+      labels:
+        app: foo
+    spec:
+      containers:
+      - name: ckad-formation-ingress
+        image:  lbouquin/ckad-formation-ingress:0.0.22
+        ports:
+        - containerPort: 80
+        env: 
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAME 
+          value: "foo.test.fr"
+
+        # - name: MY_POD_NAME # Notice that the case is different here m the key name in the ConfigMap.
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: index-html-configmap           # The ConfigMap this value comes from.
+        #       key: my_pod_name # The key to fetch

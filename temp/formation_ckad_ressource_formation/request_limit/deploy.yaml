@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: formmations-ckad-security-request-limit
+  labels:
+    app: formmations-ckad-security-request-limit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: formmations-ckad-security-request-limit
+  template:
+    metadata:
+      labels:
+        app: formmations-ckad-security-request-limit
+    spec:
+      securityContext: 
+          runAsUser: 1001 
+          runAsNonRoot:  true
+      containers:
+      - name: securitycontext-exemple
+        image:   lbouquin/formation-ckad-general-image:0.0.3
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"

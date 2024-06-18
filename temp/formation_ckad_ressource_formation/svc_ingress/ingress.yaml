@@ -1,0 +1,57 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: moningress-tls
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - toto.test.fr
+    secretName: mycert
+  rules:
+  - host: "toto.test.fr"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: toto
+            port: 
+              number: 80
+
+--- 
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: moningress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "bar.test.fr"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: bar
+            port: 
+              number: 80
+      - pathType: Exact
+        path: "/toto"
+        backend:
+          service:
+            name: toto
+            port: 
+              number: 80
+  - host: "foo.test.fr"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: foo
+            port: 
+              number: 80

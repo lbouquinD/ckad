@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name:  formation-ckad-pvc
+  labels:
+    app: pvc
+spec:
+  containers:
+  - image: busybox
+    volumeMounts:
+    - mountPath: /foo
+      name: example-volume
+      readOnly: false
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: busybox
+  volumes:
+  - name: example-volume
+    persistentVolumeClaim:
+      claimName: formationckad
+  restartPolicy: Always

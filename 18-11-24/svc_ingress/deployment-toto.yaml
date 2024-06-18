@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: toto
+  labels:
+    app: toto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: toto
+  template:
+    metadata:
+      labels:
+        app: toto
+    spec:
+      volumes: 
+
+      containers:
+      - name: ckad-formation-ingress
+        image:  lbouquin/ckad-formation-ingress:0.0.22
+        ports:
+        - containerPort: 80
+        env: 
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAME 
+          value: toto.test.fr

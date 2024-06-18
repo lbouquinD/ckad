@@ -1,0 +1,10 @@
+apiVersion: test.fr/v1
+kind: Fruit
+metadata:
+  name: monpremierfruit
+  namespace:  default
+spec:
+  nameFruit:  citron 
+  typeFruit: agrumes
+
+
