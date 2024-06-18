@@ -39,3 +39,65 @@ spec:
               fieldPath: metadata.name
         - name: NAME
           value: bar.test.fr.
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unautrebar
+  namespace: bar-ns
+  labels:
+    app: bar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bar
+  template:
+    metadata:
+      labels:
+        app: bar
+    spec:
+      containers:
+      - name: ckad-formation-ingress
+        image: lbouquin/ckad-formation-ingress:0.0.22
+        ports:
+        - containerPort: 80
+        env:
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAME
+          value: unautrebar.test.fr.
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unautrebar42
+  namespace: bar-ns
+  labels:
+    app: test42
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test42
+  template:
+    metadata:
+      labels:
+        app: bar
+    spec:
+      containers:
+      - name: ckad-formation-ingress
+        image: lbouquin/ckad-formation-ingress:0.0.22
+        ports:
+        - containerPort: 80
+        env:
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAME
+          value: bar.test.fr.
