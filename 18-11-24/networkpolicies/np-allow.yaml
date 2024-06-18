@@ -92,4 +92,4 @@ spec:
       port: 53
   - to:
     - ipBlock:
-        cidr: 0.0.0.0/0
+        cidr: 142.250.187.206/24
