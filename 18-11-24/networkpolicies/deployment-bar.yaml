@@ -87,7 +87,7 @@ spec:
   template:
     metadata:
       labels:
-        app: bar
+        app: test42
     spec:
       containers:
       - name: ckad-formation-ingress
