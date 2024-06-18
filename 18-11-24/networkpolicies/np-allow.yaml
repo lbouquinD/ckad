@@ -91,4 +91,5 @@ spec:
     - protocol: TCP
       port: 53
   - to:
-    - cidrRange: 0.0.0.0/0
+    - ipBlock:
+        cidr: 10.0.0.0/24
